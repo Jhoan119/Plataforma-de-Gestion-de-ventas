@@ -1,15 +1,12 @@
 /**
  * @fileoverview Configuración de Firebase
- * Inicializa Firebase y exporta los servicios necesarios.
- * - auth: Autenticación de usuarios
- * - db: Firestore (base de datos)
+ * Solo se usa para Autenticación (login, registro, recuperar contraseña).
+ * Los datos van todos a Supabase.
  */
 
-import { initializeApp }       from "firebase/app";
-import { getAuth }             from "firebase/auth";
-import { getFirestore }        from "firebase/firestore";
+import { initializeApp }  from "firebase/app";
+import { getAuth }        from "firebase/auth";
 
-/** Credenciales del proyecto Firebase de Pandea */
 const firebaseConfig = {
   apiKey:            "AIzaSyAHtQ0E74_tAyyFCoYrJNDLQqGb7U2DrS0",
   authDomain:        "pandea-tienda.firebaseapp.com",
@@ -20,13 +17,9 @@ const firebaseConfig = {
   measurementId:     "G-NM1CRLQXG4"
 };
 
-/** Instancia principal de Firebase */
 const app = initializeApp(firebaseConfig);
 
-/** Servicio de autenticación */
+/** Autenticación — el único servicio de Firebase que usamos */
 export const auth = getAuth(app);
-
-/** Servicio de base de datos Firestore */
-export const db = getFirestore(app);
 
 export default app;
