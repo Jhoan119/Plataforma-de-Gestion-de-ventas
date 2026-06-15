@@ -5,6 +5,7 @@
  */
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useCartController } from "../../controllers/useCartController";
 import { useAuth } from "../../context/AuthContext";
 import { ventaService } from "../../services/ventaService";
@@ -13,6 +14,7 @@ import { usuarioService } from "../../services/usuarioService";
 export default function CartDrawer() {
   const { items, total, count, isOpen, closeCart, removeFromCart, updateQuantity, clearCart } = useCartController();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [checking, setChecking] = useState(false);
   const [success,  setSuccess]  = useState(false);
 
@@ -154,14 +156,15 @@ export default function CartDrawer() {
                   <span>Total</span>
                   <span style={{ color: "#088178" }}>${total.toLocaleString()}</span>
                 </div>
-                <button onClick={handleCheckout} disabled={checking} style={{
+                <button onClick={() => { closeCart(); navigate("/checkout"); }} style={{
                   width: "100%", padding: "14px",
-                  background: checking ? "#aaa" : "#088178",
+                  background: "#088178",
                   color: "#fff", border: "none", borderRadius: 30,
-                  fontSize: 15, fontWeight: 700, cursor: checking ? "not-allowed" : "pointer",
+                  fontSize: 15, fontWeight: 700, cursor: "pointer",
                   marginBottom: 8
                 }}>
-                  {checking ? "Procesando..." : "Confirmar compra"}
+                  <i className="fas fa-lock" style={{ marginRight: 8 }} />
+                  Proceder al pago
                 </button>
                 <button onClick={clearCart} style={{
                   width: "100%", padding: "10px",
