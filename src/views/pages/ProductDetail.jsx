@@ -1,7 +1,7 @@
 /**
  * @fileoverview Página de Detalle de Producto
- * Muestra la información completa de un producto desde Firestore.
  * Permite seleccionar talla, color y cantidad antes de agregar al carrito.
+ * Guarda el productId original separado del id compuesto.
  */
 
 import { useState, useEffect } from "react";
@@ -22,7 +22,6 @@ export default function ProductDetail() {
   const [added,         setAdded]         = useState(false);
   const [error,         setError]         = useState("");
 
-  /** Carga el producto desde Firestore al montar */
   useEffect(() => {
     async function load() {
       setLoading(true);
@@ -34,17 +33,13 @@ export default function ProductDetail() {
   }, [id]);
 
   if (loading) return (
-    <div style={{ textAlign: "center", padding: 80 }}>
-      <p>Cargando producto...</p>
-    </div>
+    <div style={{ textAlign: "center", padding: 80 }}><p>Cargando producto...</p></div>
   );
 
   if (!product) return (
     <div style={{ textAlign: "center", padding: "80px 20px" }}>
       <h2>Producto no encontrado</h2>
-      <button className="btn-hero" onClick={() => navigate("/shop")}>
-        Volver a la tienda
-      </button>
+      <button className="btn-hero" onClick={() => navigate("/shop")}>Volver a la tienda</button>
     </div>
   );
 
@@ -52,13 +47,20 @@ export default function ProductDetail() {
     if (!selectedSize)  return setError("Por favor selecciona una talla.");
     if (!selectedColor) return setError("Por favor selecciona un color.");
     setError("");
+
     handleAddToCart({
-      ...product,
-      id: `${product.id}-${selectedSize}-${selectedColor}`,
-      size: selectedSize,
-      color: selectedColor,
+      // productId = UUID original de Supabase (para registrar la venta)
+      productId: product.id,
+      // id compuesto para distinguir variantes en el carrito
+      id:        `${product.id}-${selectedSize}-${selectedColor}`,
+      name:      product.name,
+      price:     product.price,
+      img:       product.img,
+      size:      selectedSize,
+      color:     selectedColor,
       quantity,
     });
+
     setAdded(true);
     setTimeout(() => setAdded(false), 2500);
   }
@@ -105,7 +107,9 @@ export default function ProductDetail() {
           <div className="detail-section">
             <p className="detail-label">
               Color: {selectedColor
-                ? <span style={{ background: selectedColor, display: "inline-block", width: 14, height: 14, borderRadius: "50%", marginLeft: 6, verticalAlign: "middle", border: "1px solid #ccc" }} />
+                ? <span style={{ background: selectedColor, display: "inline-block",
+                    width: 14, height: 14, borderRadius: "50%", marginLeft: 6,
+                    verticalAlign: "middle", border: "1px solid #ccc" }} />
                 : <span className="detail-hint">— Selecciona uno</span>}
             </p>
             <div className="color-options">
@@ -113,8 +117,7 @@ export default function ProductDetail() {
                 <button key={i}
                   className={`color-dot ${selectedColor === color ? "selected" : ""}`}
                   style={{ background: color }}
-                  onClick={() => { setSelectedColor(color); setError(""); }}
-                />
+                  onClick={() => { setSelectedColor(color); setError(""); }} />
               ))}
             </div>
           </div>

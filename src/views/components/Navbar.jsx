@@ -8,7 +8,7 @@ import RegisterModal from "./modals/RegisterModal";
 import ForgotModal from "./modals/ForgotModal";
 
 export default function Navbar() {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { logout } = useAuthController();
   const { count, openCart } = useCartController();
   const location = useLocation();
@@ -21,8 +21,6 @@ export default function Navbar() {
   const isActive = (path) => location.pathname === path;
   
   // Verificar si el usuario es administrador
-  const adminEmails = ["danicolaspp@gmail.com", "3106arias@gmail.com", "cristiangalindopaez2006@gmail.com"];
-  const isAdmin = user && adminEmails.includes(user.email);
 
   return (
     <>
